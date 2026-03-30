@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>CYBERMARKETT | Premium OTT & Digital Accounts</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Space Grotesk', sans-serif;
+    }
+
+    body {
+      background: #0a0a0f;
+      color: #fff;
+      overflow-x: hidden;
+    }
+
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-track { background: #1a1a1f; }
+    ::-webkit-scrollbar-thumb { background: #00ff88; border-radius: 4px; }
+
+    .glow-text { text-shadow: 0 0 20px rgba(0, 255, 136, 0.5); }
+
+    /* Auth Container */
+    .auth-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, #0a0a0f 0%, #0f0f1a 100%);
+      z-index: 10000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      backdrop-filter: blur(10px);
+    }
+    .auth-container.hide { display: none; }
+    .auth-box {
+      background: rgba(18, 22, 28, 0.95);
+      backdrop-filter: blur(20px);
+      padding: 45px;
+      border-radius: 30px;
+      width: 90%;
+      max-width: 450px;
+      border: 1px solid rgba(0, 255, 136, 0.3);
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+      animation: fadeInUp 0.6s ease;
+    }
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .auth-box h1 { font-size: 36px; text-align: center; background: linear-gradient(135deg, #00ff88, #00cc66); -webkit-background-clip: text; background-clip: text; color: transparent; margin-bottom: 10px; }
+    .auth-tabs { display: flex; gap: 10px; margin: 30px 0 25px; border-bottom: 1px solid rgba(0, 255, 136, 0.2); }
+    .tab-btn { flex: 1; padding: 12px; background: none; border: none; color: #888; font-weight: 600; cursor: pointer; font-size: 16px; transition: all 0.3s; }
+    .tab-btn.active { color: #00ff88; border-bottom: 2px solid #00ff88; }
+    .auth-form { display: none; }
+    .auth-form.active { display: block; }
+    .auth-input { width: 100%; background: rgba(10, 14, 20, 0.8); border: 1px solid rgba(0, 255, 136, 0.2); padding: 14px 18px; border-radius: 16px; margin: 12px 0; color: white; font-size: 16px; transition: all 0.3s; }
+    .auth-input:focus { outline: none; border-color: #00ff88; box-shadow: 0 0 15px rgba(0, 255, 136, 0.2); }
+    .auth-btn { width: 100%; background: linear-gradient(95deg, #00ff88, #00cc66); border: none; padding: 14px; border-radius: 30px; color: #0a0a0f; font-weight: bold; font-size: 16px; cursor: pointer; margin-top: 15px; transition: all 0.3s; }
+    .auth-btn:hover { transform: scale(0.98); box-shadow: 0 0 20px rgba(0, 255, 136, 0.4); }
+    
+    /* OTP Styles */
+    .otp-section { margin-top: 20px; padding-top: 15px; border-top: 1px solid rgba(0, 255, 136, 0.2); }
+    .otp-timer { font-size: 12px; color: #00ff88; text-align: center; margin: 10px 0; }
+    .verify-otp-btn { width: 100%; background: rgba(0, 255, 136, 0.2); color: #00ff88; border: 1px solid #00ff88; padding: 12px; border-radius: 30px; font-weight: bold; cursor: pointer; margin-top: 10px; transition: all 0.3s; }
+    .verify-otp-btn:hover { background: #00ff88; color: #0a0a0f; }
+
+    /* Main App */
+    .main-app { display: none; }
+    .main-app.active { display: block; }
+    
+    /* Header */
+    .cyber-header {
+      background: rgba(10, 10, 15, 0.95);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(0, 255, 136, 0.2);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+    .header-content {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 15px 25px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+    .logo {
+      font-size: 28px;
+      font-weight: 800;
+      background: linear-gradient(135deg, #00ff88, #00cc66);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    .logo i { margin-right: 10px; color: #00ff88; }
+    .nav-buttons {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .my-orders-btn {
+      background: rgba(0, 255, 136, 0.1);
+      border: 1px solid rgba(0, 255, 136, 0.3);
+      padding: 8px 20px;
+      border-radius: 30px;
+      color: #00ff88;
+      cursor: pointer;
+      transition: all 0.3s;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .my-orders-btn:hover {
+      background: #00ff88;
+      color: #0a0a0f;
+    }
+    .support-btn, .logout-btn {
+      background: rgba(0, 255, 136, 0.1);
+      border: 1px solid rgba(0, 255, 136, 0.3);
+      padding: 8px 20px;
+      border-radius: 30px;
+      color: #00ff88;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    .support-btn:hover, .logout-btn:hover {
+      background: #00ff88;
+      color: #0a0a0f;
+    }
+    .user-info {
+      background: rgba(0, 255, 136, 0.1);
+      padding: 8px 20px;
+      border-radius: 50px;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      border: 1px solid rgba(0, 255, 136, 0.3);
+    }
+    
+    /* Hero Section */
+    .hero {
+      text-align: center;
+      padding: 60px 20px;
+      background: linear-gradient(135deg, #0a0a0f, #0f0f1a);
+    }
+    .hero h1 { font-size: 56px; background: linear-gradient(135deg, #fff, #00ff88); -webkit-background-clip: text; background-clip: text; color: transparent; margin-bottom: 20px; }
+    .hero p { color: #888; font-size: 18px; max-width: 600px; margin: 0 auto; }
+    
+    /* Products Grid */
+    .products-section {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 40px 25px;
+    }
+    .section-title { font-size: 32px; margin-bottom: 30px; text-align: center; }
+    .section-title span { color: #00ff88; }
+    .products-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 25px;
+    }
+    .product-card {
+      background: rgba(26, 31, 42, 0.8);
+      backdrop-filter: blur(10px);
+      border-radius: 24px;
+      padding: 25px;
+      border: 1px solid rgba(0, 255, 136, 0.2);
+      transition: all 0.4s;
+    }
+    .product-card:hover {
+      transform: translateY(-8px);
+      border-color: #00ff88;
+      box-shadow: 0 20px 35px -12px rgba(0, 255, 136, 0.3);
+    }
+    .product-logo { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
+    .product-logo i { font-size: 48px; }
+    .product-name { font-size: 24px; font-weight: 700; }
+    .plan-badges { display: flex; flex-wrap: wrap; gap: 10px; margin: 20px 0; }
+    .plan-badge { background: rgba(0, 255, 136, 0.1); padding: 8px 16px; border-radius: 25px; font-size: 13px; cursor: pointer; transition: all 0.3s; border: 1px solid rgba(0, 255, 136, 0.2); }
+    .plan-badge:hover { background: rgba(0, 255, 136, 0.2); }
+    .plan-badge.selected { background: #00ff88; color: #0a0a0f; border-color: #00ff88; }
+    .price-display { font-size: 32px; font-weight: 800; color: #00ff88; margin: 15px 0; }
+    .buy-btn { width: 100%; background: linear-gradient(95deg, #00ff88, #00cc66); border: none; padding: 14px; border-radius: 40px; color: #0a0a0f; font-weight: bold; cursor: pointer; transition: all 0.3s; }
+    .buy-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .buy-btn:hover:not(:disabled) { transform: scale(0.98); box-shadow: 0 0 20px rgba(0, 255, 136, 0.4); }
+    
+    /* UPI Section */
+    .upi-section {
+      background: linear-gradient(135deg, #1a1f2a, #0f0f1a);
+      border-radius: 30px;
+      padding: 40px;
+      text-align: center;
+      margin: 40px 25px;
+      border: 1px solid rgba(0, 255, 136, 0.3);
+    }
+    .upi-id { font-size: 32px; font-weight: bold; color: #00ff88; background: rgba(0, 0, 0, 0.4); display: inline-block; padding: 15px 35px; border-radius: 60px; margin: 20px 0; letter-spacing: 2px; }
+    
+    /* Modals */
+    .modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.95);
+      backdrop-filter: blur(15px);
+      z-index: 20000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      visibility: hidden;
+      opacity: 0;
+      transition: all 0.3s;
+    }
+    .modal.active { visibility: visible; opacity: 1; }
+    .modal-content {
+      background: #12161e;
+      border-radius: 30px;
+      padding: 35px;
+      max-width: 650px;
+      width: 90%;
+      max-height: 85vh;
+      overflow-y: auto;
+      border-top: 4px solid #00ff88;
+      animation: fadeInUp 0.4s ease;
+    }
+    .drag-area {
+      border: 2px dashed rgba(0, 255, 136, 0.3);
+      border-radius: 20px;
+      padding: 30px;
+      text-align: center;
+      margin: 15px 0;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    .drag-area.dragover { border-color: #00ff88; background: rgba(0, 255, 136, 0.05); }
+    .preview-img { max-width: 100%; max-height: 150px; margin-top: 10px; display: none; border-radius: 12px; }
+    .modal-input { width: 100%; background: #0a0e14; border: 1px solid rgba(0, 255, 136, 0.2); padding: 12px; border-radius: 16px; margin: 10px 0; color: white; }
+    .btn-primary { background: #00ff88; color: #0a0a0f; border: none; padding: 12px 25px; border-radius: 40px; font-weight: bold; cursor: pointer; }
+    .btn-secondary { background: rgba(45, 55, 72, 0.8); border: none; padding: 12px 25px; border-radius: 40px; color: white; cursor: pointer; }
+    .modal-actions { display: flex; justify-content: flex-end; gap: 12px; margin-top: 20px; }
+    .orders-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    .orders-table th, .orders-table td { padding: 12px 8px; border-bottom: 1px solid rgba(0, 255, 136, 0.1); text-align: left; }
+    .status-badge { padding: 4px 12px; border-radius: 30px; font-size: 11px; display: inline-block; }
+    .status-pending { background: #b45309; }
+    .status-delivered { background: #00ff88; color: #0a0a0f; }
+    .toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: #1e293b; padding: 14px 30px; border-radius: 60px; z-index: 30000; transition: 0.2s; pointer-events: none; border: 1px solid #00ff88; white-space: nowrap; }
+    .admin-footer { text-align: center; padding: 30px; }
+    .admin-btn { background: transparent; border: 1px solid rgba(0, 255, 136, 0.3); padding: 12px 32px; border-radius: 60px; color: #888; cursor: pointer; transition: all 0.3s; }
+    .admin-btn:hover { border-color: #00ff88; color: #00ff88; }
+    footer { text-align: center; padding: 30px; color: #666; font-size: 12px; border-top: 1px solid rgba(0, 255, 136, 0.1); }
+    .loading-spinner { display: inline-block; width: 16px; height: 16px; border: 2px solid rgba(255,255,255,0.3); border-radius: 50%; border-top-color: white; animation: spin 0.6s linear infinite; margin-right: 8px; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    @media (max-width: 768px) {
+      .hero h1 { font-size: 36px; }
+      .upi-id { font-size: 20px; padding: 10px 20px; }
+      .toast { white-space: normal; max-width: 90%; text-align: center; }
+      .nav-buttons { width: 100%; justify-content: center; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- AUTH PAGE -->
+<div id="authPage" class="auth-container">
+  <div class="auth-box">
+    <h1><i class="fas fa-bolt"></i> CYBERMARKETT</h1>
+    <p style="text-align: center; color: #888;">Secure OTP Login • Premium Digital Accounts</p>
+    <div class="auth-tabs">
+      <button class="tab-btn active" id="tabLogin">🔐 Login</button>
+      <button class="tab-btn" id="tabRegister">📝 Register</button>
+    </div>
+    <div id="loginFormDiv" class="auth-form active">
+      <input type="email" id="loginEmail" class="auth-input" placeholder="Email Address">
+      <input type="password" id="loginPassword" class="auth-input" placeholder="Password">
+      <div id="loginOtpSection" class="otp-section" style="display: none;">
+        <input type="text" id="loginOtpCode" class="auth-input" placeholder="Enter 6-digit OTP" maxlength="6">
+        <div class="otp-timer" id="loginOtpTimer"></div>
+        <button onclick="resendLoginOTP()" class="verify-otp-btn" style="background: transparent;">⟳ Resend Code</button>
+        <button onclick="verifyLoginOTP()" class="verify-otp-btn">✓ Verify OTP</button>
+      </div>
+      <button id="loginButton" class="auth-btn">Continue with OTP</button>
+    </div>
+    <div id="registerFormDiv" class="auth-form">
+      <input type="text" id="regName" class="auth-input" placeholder="Full Name">
+      <input type="email" id="regEmail" class="auth-input" placeholder="Email Address">
+      <input type="password" id="regPassword" class="auth-input" placeholder="Password (min 4 chars)">
+      <input type="password" id="regConfirmPass" class="auth-input" placeholder="Confirm Password">
+      <div id="registerOtpSection" class="otp-section" style="display: none;">
+        <input type="text" id="registerOtpCode" class="auth-input" placeholder="Enter 6-digit OTP" maxlength="6">
+        <div class="otp-timer" id="registerOtpTimer"></div>
+        <button onclick="resendRegisterOTP()" class="verify-otp-btn" style="background: transparent;">⟳ Resend Code</button>
+        <button onclick="verifyRegisterOTP()" class="verify-otp-btn">✓ Verify OTP</button>
+      </div>
+      <button id="registerButton" class="auth-btn">Register with OTP</button>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN APP -->
+<div id="mainApp" class="main-app">
+  <div class="cyber-header">
+    <div class="header-content">
+      <div class="logo"><i class="fas fa-bolt"></i> CYBERMARKETT</div>
+      <div class="nav-buttons">
+        <button id="myOrdersBtn" class="my-orders-btn"><i class="fas fa-box"></i> My Orders (<span id="orderCount">0</span>)</button>
+        <button id="supportTelegram" class="support-btn"><i class="fab fa-telegram"></i> @Not_Rexy0</button>
+        <div class="user-info">
+          <span><i class="fas fa-user-astronaut"></i> <span id="userNameSpan"></span></span>
+          <button id="logoutButton" class="logout-btn">Exit</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="hero">
+    <h1 class="glow-text">Premium Digital Accounts</h1>
+    <p>Netflix • Spotify • YouTube • Amazon • ChatGPT • Hotstar • Sony LIV • Crunchyroll</p>
+    <p style="margin-top: 15px; font-size: 14px;">✓ Instant Delivery ✓ Secure Payment ✓ 24/7 Support</p>
+  </div>
+  
+  <div class="products-section">
+    <div class="section-title">🔥 <span>Featured</span> OTT Accounts</div>
+    <div id="productsContainer" class="products-grid"></div>
+  </div>
+  
+  <div class="upi-section">
+    <i class="fas fa-shield-alt" style="font-size: 32px; color: #00ff88;"></i>
+    <p style="margin: 15px 0;">Secure Payment via UPI</p>
+    <div class="upi-id">7364914897@fam</div>
+    <p style="font-size: 13px;">After payment, upload screenshot with your Telegram username</p>
+  </div>
+  
+  <div class="admin-footer">
+    <button id="adminPanelButton" class="admin-btn"><i class="fas fa-terminal"></i> ADMIN ZONE</button>
+  </div>
+  <footer>© 2024 CYBERMARKETT • All transactions are secure • Delivery via Telegram</footer>
+</div>
+
+<!-- MY ORDERS MODAL -->
+<div id="myOrdersModal" class="modal">
+  <div class="modal-content" style="max-width: 900px;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+      <h2><i class="fas fa-box"></i> My Orders</h2>
+      <button id="closeMyOrders" class="btn-secondary">Close</button>
+    </div>
+    <div style="overflow-x: auto;">
+      <table class="orders-table">
+        <thead>
+          <tr><th>Order ID</th><th>Product</th><th>Plan</th><th>Price</th><th>Date</th><th>Status</th><th>Account Details</th></tr>
+        </thead>
+        <tbody id="myOrdersTableBody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- PAYMENT MODAL -->
+<div id="paymentModal" class="modal">
+  <div class="modal-content">
+    <h3><i class="fas fa-upload"></i> Submit Payment Proof</h3>
+    <p>UPI: <strong style="color:#00ff88;">7364914897@fam</strong></p>
+    <p><strong id="payProductName"></strong> — <strong id="payPlanName"></strong> | <span style="color:#00ff88;" id="payPrice"></span></p>
+    <input type="text" id="telegramUsername" class="modal-input" placeholder="Your Telegram Username (@username)">
+    <div id="uploadArea" class="drag-area">
+      <i class="fas fa-cloud-upload-alt" style="font-size: 32px;"></i>
+      <p>Click or drag payment screenshot</p>
+      <input type="file" id="screenshotInput" accept="image/*" style="display: none;">
+      <img id="previewImg" class="preview-img">
+    </div>
+    <textarea id="transactionNote" rows="2" class="modal-input" placeholder="Transaction ID (optional)"></textarea>
+    <div class="modal-actions">
+      <button id="closePaymentModal" class="btn-secondary">Cancel</button>
+      <button id="submitOrderButton" class="btn-primary">Confirm Order</button>
+    </div>
+  </div>
+</div>
+
+<!-- ADMIN MODALS -->
+<div id="adminLoginModal" class="modal">
+  <div class="modal-content">
+    <h3><i class="fas fa-skull"></i> ADMIN ACCESS</h3>
+    <input type="text" id="adminUser" class="modal-input" placeholder="Username">
+    <input type="password" id="adminPass" class="modal-input" placeholder="Password">
+    <div class="modal-actions">
+      <button id="closeAdminModal" class="btn-secondary">Cancel</button>
+      <button id="adminLoginButton" class="btn-primary">Authenticate</button>
+    </div>
+  </div>
+</div>
+
+<div id="adminDashboardModal" class="modal">
+  <div class="modal-content" style="max-width: 1300px;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+      <h2><i class="fas fa-chart-line"></i> Admin Console</h2>
+      <button id="closeDashboard" class="btn-secondary">Close</button>
+    </div>
+    <div style="background: #0a0e14; padding: 20px; border-radius: 20px; margin-bottom: 25px;">
+      <h3 style="color: #00ff88;">📡 Login Activity</h3>
+      <div id="notificationsDiv" style="max-height: 150px; overflow-y: auto; margin-top: 15px;"></div>
+      <button id="clearNotifBtn" class="btn-secondary" style="margin-top: 12px;">Clear Logs</button>
+    </div>
+    <div style="background: #0a0e14; padding: 20px; border-radius: 20px;">
+      <h3 style="color: #00ff88;">📦 Orders Management</h3>
+      <div style="overflow-x: auto;">
+        <table class="orders-table">
+          <thead><tr><th>ID</th><th>Product</th><th>Plan</th><th>Price</th><th>User</th><th>Telegram</th><th>Status</th><th>Deliver</th><th>Action</th></tr></thead>
+          <tbody id="ordersTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="toastMessage" class="toast" style="opacity:0;"></div>
+
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<script>
+// EmailJS Config
+const PUBLIC_KEY = "43u9DMgh7_rU-ZXyH";
+const SERVICE_ID = "service_3zna48p";
+const TEMPLATE_ID = "template_dgrmadb";
+
+emailjs.init({ publicKey: PUBLIC_KEY });
+
+// Products Data
+let products = [
+  { name: "Netflix", icon: "fab fa-netflix", color: "#E50914", plans: [{ duration: "1 Month", price: 80 }] },
+  { name: "Crunchyroll", icon: "fas fa-tv", color: "#F47521", plans: [{ duration: "1 Month", price: 49 }, { duration: "3 Months", price: 89 }, { duration: "6 Months", price: 149 }] },
+  { name: "Spotify", icon: "fab fa-spotify", color: "#1DB954", plans: [{ duration: "1 Month", price: 49 }, { duration: "3 Months", price: 89 }] },
+  { name: "YouTube Premium", icon: "fab fa-youtube", color: "#FF0000", plans: [{ duration: "1 Month", price: 59 }] },
+  { name: "Sony LIV", icon: "fas fa-futbol", color: "#00B4FF", plans: [{ duration: "1 Month", price: 59 }, { duration: "3 Months", price: 159 }] },
+  { name: "JioHotstar", icon: "fas fa-star", color: "#FF5E00", plans: [{ duration: "1 Month", price: 79 }, { duration: "3 Months", price: 179 }] },
+  { name: "Amazon Prime", icon: "fab fa-amazon", color: "#FF9900", plans: [{ duration: "1 Month", price: 49 }, { duration: "3 Months", price: 89 }, { duration: "6 Months", price: 99 }] },
+  { name: "ChatGPT Plus", icon: "fas fa-robot", color: "#10a37f", plans: [{ duration: "1 Month", price: 69 }, { duration: "3 Months", price: 169 }] }
+];
+
+let users = [], orders = [], currentUser = null, selectedProduct = null, selectedPlan = null, uploadedImage = null, notifications = [];
+let loginOTP = null, registerOTP = null, pendingUser = null, pendingRegisterData = null;
+let loginTimer = null, registerTimer = null;
+const ADMIN_USER = "harry", ADMIN_PASS = "harryop";
+
+function showToast(msg, isError = false) {
+  let toast = document.getElementById("toastMessage");
+  toast.innerText = msg;
+  toast.style.opacity = "1";
+  toast.style.background = isError ? "#dc2626" : "#1e293b";
+  setTimeout(() => toast.style.opacity = "0", 4000);
+}
+
+function saveData() {
+  localStorage.setItem("cyber_products", JSON.stringify(products));
+  localStorage.setItem("cyber_users", JSON.stringify(users));
+  localStorage.setItem("cyber_orders", JSON.stringify(orders));
+  localStorage.setItem("cyber_notifications", JSON.stringify(notifications));
+}
+
+function loadData() {
+  let p = localStorage.getItem("cyber_products");
+  if(p) products = JSON.parse(p);
+  let u = localStorage.getItem("cyber_users");
+  if(u) users = JSON.parse(u);
+  if(users.length === 0) users = [{ name: "Demo", email: "demo@test.com", password: "123456" }, { name: "Test", email: "test@test.com", password: "test123" }];
+  let o = localStorage.getItem("cyber_orders");
+  if(o) orders = JSON.parse(o);
+  let n = localStorage.getItem("cyber_notifications");
+  if(n) notifications = JSON.parse(n);
+  saveData();
+}
+
+function addNotification(name, email) {
+  notifications.unshift({ name, email, time: new Date().toLocaleString() });
+  if(notifications.length > 50) notifications.pop();
+  saveData();
+}
+
+function renderNotifications() {
+  let div = document.getElementById("notificationsDiv");
+  if(!div) return;
+  if(notifications.length === 0) { div.innerHTML = '<p style="color:#888;">No login activity yet</p>'; return; }
+  div.innerHTML = notifications.map(n => `<div style="background:#1a1f2a; padding:10px; margin-bottom:8px; border-radius:12px; border-left:3px solid #00ff88;"><strong style="color:#00ff88;">${n.name}</strong> <span style="color:#888;">${n.email}</span><br><small style="color:#666;">${n.time}</small></div>`).join('');
+}
+
+function updateOrderCount() {
+  let countSpan = document.getElementById("orderCount");
+  if(countSpan && currentUser) {
+    let userOrders = orders.filter(o => o.userEmail === currentUser.email);
+    countSpan.innerText = userOrders.length;
+  }
+}
+
+function renderMyOrders() {
+  let tbody = document.getElementById("myOrdersTableBody");
+  if(!tbody) return;
+  if(!currentUser) return;
+  let userOrders = orders.filter(o => o.userEmail === currentUser.email);
+  if(userOrders.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;">No orders yet</td></tr>';
+    return;
+  }
+  tbody.innerHTML = userOrders.map(order => `
+    <tr>
+      <td><small>${order.id}</small></td>
+      <td>${order.productName}</td>
+      <td>${order.plan}</td>
+      <td>₹${order.price}</td>
+      <td><small>${new Date(order.date).toLocaleDateString() || 'Recent'}</small></td>
+      <td><span class="status-badge ${order.status === 'delivered' ? 'status-delivered' : 'status-pending'}">${order.status === 'delivered' ? 'Delivered ✓' : 'Pending ⏳'}</span></td>
+      <td>${order.accountDetails ? order.accountDetails : '—'}</td>
+    </tr>
+  `).join('');
+}
+
+function renderProducts() {
+  let container = document.getElementById("productsContainer");
+  if(!container) return;
+  container.innerHTML = products.map((p, idx) => `
+    <div class="product-card">
+      <div class="product-logo"><i class="${p.icon}" style="color:${p.color};"></i><span class="product-name">${p.name}</span></div>
+      <div class="plan-badges" data-product="${idx}">${p.plans.map((plan, planIdx) => `<span class="plan-badge" data-plan="${planIdx}">${plan.duration} • ₹${plan.price}</span>`).join('')}</div>
+      <div class="price-display" id="price-${idx}">Select plan</div>
+      <button class="buy-btn" id="buy-${idx}" disabled>Select Plan First</button>
+    </div>
+  `).join('');
+  
+  products.forEach((p, idx) => {
+    let badges = document.querySelectorAll(`[data-product="${idx}"] .plan-badge`);
+    let priceDiv = document.getElementById(`price-${idx}`);
+    let buyBtn = document.getElementById(`buy-${idx}`);
+    badges.forEach((badge, planIdx) => {
+      badge.onclick = () => {
+        badges.forEach(b => b.classList.remove("selected"));
+        badge.classList.add("selected");
+        let plan = p.plans[planIdx];
+        priceDiv.innerHTML = `₹${plan.price} <span style="font-size:14px;">/ ${plan.duration}</span>`;
+        buyBtn.disabled = false;
+        buyBtn.innerHTML = `Buy ${p.name} - ${plan.duration}`;
+        buyBtn.onclick = () => { selectedProduct = p; selectedPlan = plan; document.getElementById("payProductName").innerText = p.name; document.getElementById("payPlanName").innerText = plan.duration; document.getElementById("payPrice").innerHTML = `₹${plan.price}`; document.getElementById("paymentModal").classList.add("active"); };
+      };
+    });
+  });
+}
+
+function renderOrders() {
+  let tbody = document.getElementById("ordersTableBody");
+  if(!tbody) return;
+  if(orders.length === 0) { tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;">No orders</td></tr>'; return; }
+  tbody.innerHTML = orders.map(order => `
+    <tr>
+      <td><small>${order.id}</small></td>
+      <td>${order.productName}</td>
+      <td>${order.plan}</td>
+      <td>₹${order.price}</td>
+      <td>${order.userEmail}</td>
+      <td><a href="https://t.me/${order.telegram}" target="_blank" style="color:#00ff88;">@${order.telegram}</a></td>
+      <td><span class="status-badge ${order.status === 'delivered' ? 'status-delivered' : 'status-pending'}">${order.status === 'delivered' ? 'Delivered' : 'Pending'}</span></td>
+      <td>${order.status !== 'delivered' ? `<input type="text" id="deliver_${order.id}" class="modal-input" style="width:120px; padding:5px;" placeholder="Email:pass">` : order.accountDetails || '—'}</td>
+      <td>${order.status !== 'delivered' ? `<button class="btn-primary" style="padding:5px 12px;" onclick="deliverOrder('${order.id}')">Send</button>` : '✅'}</td>
+     </tr>
+  `).join('');
+}
+
+window.deliverOrder = function(orderId) {
+  let input = document.getElementById(`deliver_${orderId}`);
+  if(!input?.value) { showToast("Enter account details"); return; }
+  let order = orders.find(o => o.id === orderId);
+  if(order) { order.accountDetails = input.value; order.status = "delivered"; saveData(); renderOrders(); updateOrderCount(); showToast(`✅ Delivered to @${order.telegram}`); }
+};
+
+// Image Upload
+let uploadArea = document.getElementById("uploadArea"), fileInput = document.getElementById("screenshotInput"), preview = document.getElementById("previewImg");
+if(uploadArea) {
+  uploadArea.onclick = () => fileInput.click();
+  uploadArea.ondragover = (e) => { e.preventDefault(); uploadArea.style.borderColor = "#00ff88"; };
+  uploadArea.ondragleave = () => uploadArea.style.borderColor = "rgba(0,255,136,0.3)";
+  uploadArea.ondrop = (e) => {
+    e.preventDefault();
+    let file = e.dataTransfer.files[0];
+    if(file?.type.startsWith("image/")) { let r = new FileReader(); r.onload = (ev) => { uploadedImage = ev.target.result; preview.src = uploadedImage; preview.style.display = "block"; }; r.readAsDataURL(file); }
+    else showToast("Only images allowed");
+  };
+  fileInput.onchange = (e) => { let file = e.target.files[0]; if(file) { let r = new FileReader(); r.onload = (ev) => { uploadedImage = ev.target.result; preview.src = uploadedImage; preview.style.display = "block"; }; r.readAsDataURL(file); } };
+}
+
+document.getElementById("submitOrderButton").onclick = () => {
+  let telegram = document.getElementById("telegramUsername").value.trim();
+  if(!telegram) { showToast("Enter Telegram username"); return; }
+  if(!uploadedImage) { showToast("Upload payment screenshot"); return; }
+  if(!selectedProduct || !selectedPlan || !currentUser) { showToast("Select a plan first"); return; }
+  orders.unshift({ id: "ORD-" + Date.now() + "-" + Math.floor(Math.random()*1000), productName: selectedProduct.name, plan: selectedPlan.duration, price: selectedPlan.price, userEmail: currentUser.email, userName: currentUser.name, telegram: telegram.replace('@', ''), screenshot: uploadedImage, note: document.getElementById("transactionNote").value, status: "pending", accountDetails: null, date: new Date().toISOString() });
+  saveData(); updateOrderCount(); showToast(`✅ Order placed! Admin will contact @${telegram}`); document.getElementById("paymentModal").classList.remove("active"); selectedProduct = null; selectedPlan = null; uploadedImage = null; document.getElementById("telegramUsername").value = ""; document.getElementById("transactionNote").value = ""; preview.style.display = "none";
+};
+document.getElementById("closePaymentModal").onclick = () => document.getElementById("paymentModal").classList.remove("active");
+
+// OTP Functions
+function generateOTP() { return Math.floor(100000 + Math.random() * 900000).toString(); }
+
+async function sendOTP(email, type) {
+  const otp = generateOTP();
+  try {
+    await emailjs.send(SERVICE_ID, TEMPLATE_ID, { passcode: otp, time: "5 minutes", email: email });
+    if (type === 'login') { loginOTP = otp; startLoginTimer(); document.getElementById('loginOtpSection').style.display = 'block'; }
+    else { registerOTP = otp; startRegisterTimer(); document.getElementById('registerOtpSection').style.display = 'block'; }
+    showToast(`✓ OTP sent to ${email}! Valid for 5 minutes.`);
+    return true;
+  } catch (error) { showToast(`Failed to send OTP`, true); return false; }
+}
+
+function startLoginTimer() { if(loginTimer) clearInterval(loginTimer); let timeLeft = 300; loginTimer = setInterval(() => { let timerEl = document.getElementById('loginOtpTimer'); if(timeLeft <= 0) { clearInterval(loginTimer); if(timerEl) timerEl.innerHTML = '<span style="color:#dc2626;">OTP expired</span>'; loginOTP = null; } else { let m = Math.floor(timeLeft/60), s = timeLeft%60; if(timerEl) timerEl.innerHTML = `⏱️ Expires in: ${m}:${s.toString().padStart(2,'0')}`; timeLeft--; } }, 1000); }
+function startRegisterTimer() { if(registerTimer) clearInterval(registerTimer); let timeLeft = 300; registerTimer = setInterval(() => { let timerEl = document.getElementById('registerOtpTimer'); if(timeLeft <= 0) { clearInterval(registerTimer); if(timerEl) timerEl.innerHTML = '<span style="color:#dc2626;">OTP expired</span>'; registerOTP = null; } else { let m = Math.floor(timeLeft/60), s = timeLeft%60; if(timerEl) timerEl.innerHTML = `⏱️ Expires in: ${m}:${s.toString().padStart(2,'0')}`; timeLeft--; } }, 1000); }
+
+function verifyLoginOTP() {
+  let entered = document.getElementById('loginOtpCode').value.trim();
+  if(!entered) { showToast("Enter OTP code", true); return; }
+  if(entered === loginOTP && pendingUser) {
+    if(loginTimer) clearInterval(loginTimer);
+    currentUser = { email: pendingUser.email, name: pendingUser.name };
+    localStorage.setItem("currentUser", JSON.stringify(currentUser));
+    addNotification(pendingUser.name, pendingUser.email);
+    document.getElementById("authPage").classList.add("hide");
+    document.getElementById("mainApp").classList.add("active");
+    document.getElementById("userNameSpan").innerText = currentUser.name;
+    updateOrderCount();
+    renderProducts();
+    showToast(`Welcome ${pendingUser.name}!`);
+    document.getElementById("loginOtpSection").style.display = "none";
+    document.getElementById("loginOtpCode").value = "";
+    pendingUser = null;
+    loginOTP = null;
+  } else { showToast("Wrong OTP", true); document.getElementById('loginOtpCode').value = ''; }
+}
+
+function verifyRegisterOTP() {
+  let entered = document.getElementById('registerOtpCode').value.trim();
+  if(!entered) { showToast("Enter OTP code", true); return; }
+  if(entered === registerOTP && pendingRegisterData) {
+    if(registerTimer) clearInterval(registerTimer);
+    users.push({ name: pendingRegisterData.name, email: pendingRegisterData.email, password: pendingRegisterData.password });
+    saveData();
+    showToast("✅ Account created! Please login.");
+    document.getElementById("registerOtpSection").style.display = "none";
+    document.getElementById("registerOtpCode").value = "";
+    document.getElementById("regName").value = "";
+    document.getElementById("regEmail").value = "";
+    document.getElementById("regPassword").value = "";
+    document.getElementById("regConfirmPass").value = "";
+    pendingRegisterData = null;
+    registerOTP = null;
+    document.getElementById("tabLogin").click();
+  } else { showToast("Wrong OTP", true); document.getElementById('registerOtpCode').value = ''; }
+}
+
+function resendLoginOTP() { let email = document.getElementById("loginEmail").value.trim(); if(email) sendOTP(email, 'login'); else showToast("Enter email first", true); }
+function resendRegisterOTP() { let email = document.getElementById("regEmail").value.trim(); if(email) sendOTP(email, 'register'); else showToast("Enter email first", true); }
+
+async function handleLogin() {
+  let email = document.getElementById("loginEmail").value.trim();
+  let pass = document.getElementById("loginPassword").value;
+  if(!email || !pass) { showToast("Enter email and password", true); return; }
+  let user = users.find(u => u.email === email && u.password === pass);
+  if(!user) { showToast("Invalid credentials", true); return; }
+  let btn = document.getElementById("loginButton");
+  btn.innerHTML = '<span class="loading-spinner"></span>Sending OTP...'; btn.disabled = true;
+  let sent = await sendOTP(email, 'login');
+  btn.innerHTML = 'Continue with OTP'; btn.disabled = false;
+  if(sent) pendingUser = user;
+}
+
+async function handleRegister() {
+  let name = document.getElementById("regName").value.trim();
+  let email = document.getElementById("regEmail").value.trim();
+  let pass = document.getElementById("regPassword").value;
+  let confirm = document.getElementById("regConfirmPass").value;
+  if(!name || !email || !pass) { showToast("Fill all fields", true); return; }
+  if(pass !== confirm) { showToast("Passwords don't match", true); return; }
+  if(pass.length < 4) { showToast("Password min 4 chars", true); return; }
+  if(users.find(u => u.email === email)) { showToast("Email already registered", true); return; }
+  let btn = document.getElementById("registerButton");
+  btn.innerHTML = '<span class="loading-spinner"></span>Sending OTP...'; btn.disabled = true;
+  let sent = await sendOTP(email, 'register');
+  btn.innerHTML = 'Register with OTP'; btn.disabled = false;
+  if(sent) pendingRegisterData = { name, email, password: pass };
+}
+
+// Event Listeners
+document.addEventListener("DOMContentLoaded", function() {
+  loadData();
+  renderProducts();
+  let saved = localStorage.getItem("currentUser");
+  if(saved) {
+    try {
+      currentUser = JSON.parse(saved);
+      if(users.find(u => u.email === currentUser.email)) {
+        document.getElementById("authPage").classList.add("hide");
+        document.getElementById("mainApp").classList.add("active");
+        document.getElementById("userNameSpan").innerText = currentUser.name;
+        updateOrderCount();
+        renderProducts();
+      }
+    } catch(e) {}
+  }
+  
+  document.getElementById("loginButton").onclick = handleLogin;
+  document.getElementById("registerButton").onclick = handleRegister;
+  
+  document.getElementById("tabLogin").onclick = () => {
+    document.getElementById("tabLogin").classList.add("active");
+    document.getElementById("tabRegister").classList.remove("active");
+    document.getElementById("loginFormDiv").classList.add("active");
+    document.getElementById("registerFormDiv").classList.remove("active");
+    document.getElementById("loginOtpSection").style.display = "none";
+    document.getElementById("registerOtpSection").style.display = "none";
+  };
+  document.getElementById("tabRegister").onclick = () => {
+    document.getElementById("tabRegister").classList.add("active");
+    document.getElementById("tabLogin").classList.remove("active");
+    document.getElementById("registerFormDiv").classList.add("active");
+    document.getElementById("loginFormDiv").classList.remove("active");
+    document.getElementById("loginOtpSection").style.display = "none";
+    document.getElementById("registerOtpSection").style.display = "none";
+  };
+  
+  document.getElementById("logoutButton").onclick = () => {
+    currentUser = null;
+    localStorage.removeItem("currentUser");
+    document.getElementById("mainApp").classList.remove("active");
+    document.getElementById("authPage").classList.remove("hide");
+    showToast("Logged out");
+  };
+  
+  document.getElementById("myOrdersBtn").onclick = () => {
+    if(currentUser) { renderMyOrders(); document.getElementById("myOrdersModal").classList.add("active"); }
+    else showToast("Please login first", true);
+  };
+  document.getElementById("closeMyOrders").onclick = () => document.getElementById("myOrdersModal").classList.remove("active");
+  
+  document.getElementById("supportTelegram").onclick = () => window.open("https://t.me/Not_Rexy0", "_blank");
+  document.getElementById("adminPanelButton").onclick = () => document.getElementById("adminLoginModal").classList.add("active");
+  document.getElementById("closeAdminModal").onclick = () => document.getElementById("adminLoginModal").classList.remove("active");
+  document.getElementById("adminLoginButton").onclick = () => {
+    let user = document.getElementById("adminUser").value, pass = document.getElementById("adminPass").value;
+    if(user === ADMIN_USER && pass === ADMIN_PASS) {
+      document.getElementById("adminLoginModal").classList.remove("active");
+      renderNotifications(); renderOrders();
+      document.getElementById("adminDashboardModal").classList.add("active");
+      showToast("Welcome Admin!");
+    } else showToast("Invalid credentials", true);
+  };
+  document.getElementById("closeDashboard").onclick = () => document.getElementById("adminDashboardModal").classList.remove("active");
+  document.getElementById("clearNotifBtn").onclick = () => { notifications = []; saveData(); renderNotifications(); showToast("Cleared"); };
+  
+  document.querySelectorAll(".modal").forEach(modal => {
+    modal.onclick = function(e) { if(e.target === this) this.classList.remove("active"); };
+  });
+  
+  document.getElementById("loginPassword").onkeypress = (e) => { if(e.key === "Enter") handleLogin(); };
+  document.getElementById("regConfirmPass").onkeypress = (e) => { if(e.key === "Enter") handleRegister(); };
+});
+</script>
+</body>
+</html>
